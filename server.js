@@ -28,14 +28,14 @@ app.use(express.static("assets"));
 // import a mongodb driver (mongoose)
 const mongoose = require("mongoose");
 mongoose.connect(
-  "mongodb+srv://mabuhannood:0791439363.Ah@cluster0.1l18sqj.mongodb.net/fitness"
+  "mongodb+srv://mabuhannood:22446688@cluster0.clc893a.mongodb.net/fitness"
 );
 const Schema = mongoose.Schema;
 const classesSchema = new Schema({
   id: Number,
-  className: String,
-  classInstructor: String,
-  classDuration: Number,
+  class_name: String,
+  class_instructor: String,
+  class_duration: Number,
   img: String,
 });
 

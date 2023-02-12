@@ -1,17 +1,19 @@
-<h2>CUSTOMER DETAILS</h2>
-<input type="text" placeholder="Enter your name" />
-<br />
-<input type="email" placeholder="Enter your email" />
-<br />
-<button>VERIFIED MEMBER</button>
-<h2>YOUR CLASSES</h2>
-<p></p>
-<button>REMOVE</button>
-<h2>YOUR CLASSES</h2>
-<p></p>
-<button>REMOVE</button>
-<hr />
-<p>Subtotal:</p>
-<p>Tax:</p>
-<hr />
-<p>Total:</p>
+<h1>CHECKOUT</h1>
+<form id="cartPage" method="post" action="/checkout">
+  <h3>CUSTOMER DETAILS</h3>
+  <input type="text" placeholder="Enter your name" />
+  <br />
+  <input type="email" placeholder="Enter your email" />
+  <br />
+  <button id="btn-member">VERIFIED MEMBER</button>
+  <h3>YOUR CLASSES</h3>
+  <p>CYCLING - BEGINNER WITH ALEX</p>
+  <p>30 MIN</p>
+  <button id="btn-remove">REMOVE</button>
+  <hr />
+  <p class="total">Subtotal: 1000</p>
+  <p class="total">Tax: 1000</p>
+  <hr />
+  <p class="total">Total: 1000</p>
+  <button id="btn-pay">PAY</button>
+</form>

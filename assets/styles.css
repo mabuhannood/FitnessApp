@@ -1,16 +1,65 @@
 body {
   font-family: "Readex Pro", sans-serif;
-  background-image: url(homeimage.jpg);
-  background-size: cover;
+  /* background-image: url(homeimage2.jpg);
+  background-size: cover; */
+  background-color: black;
 }
-.homePage {
+h1 {
+  text-align: center;
+  color: white;
+}
+header {
+  background-color: black;
+  height: 50px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-bottom: 1px solid green;
+}
+header a {
+  margin: 15px 0px 0px 10px;
+  color: white;
+}
+ul {
+  justify-content: right;
+  list-style: none;
+  height: 50px;
+  display: flex;
+  /* padding-left: 0px; */
+  align-items: center;
+  margin-top: 0px;
+  /* background-color: magenta; */
+}
+
+li a {
+  padding-left: 30px;
+  padding-right: 20px;
+  color: white;
+}
+/* ----------------------------------- HOME PAGE */
+#homePage {
   justify-content: center;
   text-align: center;
   align-items: center;
-  margin: auto;
+  margin-top: 100px;
   justify-content: center;
   color: white;
 }
+a {
+  text-decoration: none;
+}
+#homePage p {
+  margin-bottom: 30px;
+}
+#btn-homePage {
+  border-radius: 25px;
+  color: white;
+  background-color: green;
+  border: 1px solid green;
+  padding: 10px 20px 10px 20px;
+  /* margin-top: 300px; */
+}
+
+/* ----------------------------------- CLASSES PAGE */
 img {
   width: 170px;
   height: 150px;
@@ -23,4 +72,135 @@ img {
   width: 800px;
   margin-left: auto;
   margin-right: auto;
+  background-color: white;
+  border-radius: 10px;
+}
+#classDescrp {
+  padding-left: 20px;
+  color: navy;
+}
+#classDescrp button {
+  border-radius: 5px;
+  color: white;
+  background-color: green;
+  border: 1px solid green;
+  padding: 10px 20px 10px 20px;
+}
+span {
+  color: black;
+  font-size: 15;
+}
+#classesForm img {
+  padding: 10px;
+}
+#classHeader {
+  text-align: center;
+  color: white;
+}
+/* ----------------------------------- LOGIN PAGE */
+#loginPage {
+  width: 300px;
+  padding: 20px;
+  margin: auto;
+  margin-top: 100px;
+  background-color: white;
+  border: 2px solid silver;
+}
+#loginPage input {
+  border: 2px solid silver;
+  padding: 5px;
+  margin: 0px 0px 10px 0px;
+  width: 300px;
+}
+#loginPage button {
+  cursor: pointer;
+  /* border-radius: 5px; */
+  color: white;
+  width: 147.7px;
+  margin-bottom: 5px;
+  padding: 10px 0px 10px 0px;
+}
+#btn-login {
+  background-color: green;
+  border: 1px solid green;
+}
+#btn-create {
+  background-color: navy;
+  border: 1px solid navy;
+}
+h3 {
+  font-size: 12;
+  color: green;
+}
+
+#createPage {
+  width: 300px;
+  padding: 20px;
+  margin: auto;
+  margin-top: 100px;
+  background-color: white;
+  border: 2px solid silver;
+}
+label {
+  font-size: 12;
+  font-weight: lighter;
+}
+.btn-yesno {
+  cursor: pointer;
+  /* border-radius: 5px; */
+  color: white;
+  width: 147.7px;
+  margin-top: 10px;
+  padding: 10px 0px 10px 0px;
+  background-color: green;
+  border: 1px solid green;
+  margin-bottom: 5px;
+}
+/* ----------------------------------- CART PAGE */
+#cartPage {
+  width: 500px;
+  padding: 20px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  background-color: white;
+  border: 2px solid silver;
+}
+#cartPage input {
+  border: 2px solid silver;
+  padding: 5px;
+  margin: 0px 0px 10px 0px;
+  width: 500px;
+}
+#btn-pay {
+  cursor: pointer;
+  /* border-radius: 5px; */
+  color: white;
+  width: 500px;
+  margin-top: 10px;
+  padding: 10px 0px 10px 0px;
+  background-color: greenyellow;
+  border: 1px solid greenyellow;
+  font-weight: bolder;
+  margin-bottom: 5px;
+}
+
+#btn-member {
+  background-color: silver;
+  border: 1px solid silver;
+  padding: 10px;
+}
+#btn-remove {
+  color: green;
+  width: 120px;
+  padding: 10px 0px 10px 0px;
+  background-color: rgb(235, 233, 233);
+  border: 1px solid rgb(235, 233, 233);
+  font-weight: bold;
+}
+.total {
+  text-align: right;
+}
+hr {
+  color: silver;
 }

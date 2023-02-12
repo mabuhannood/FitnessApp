@@ -1,12 +1,10 @@
-<h1>OUR CLASSES</h1>
-<p>Let us help you find a class that meets your fitness goals.</p>
 <form id="classesForm" action="/classes" method="POST">
   <div id="ClassImg">
     <img src="{{{this.img}}}" />
   </div>
   <div id="classDescrp">
-    <h2>{{{this.className}}} with {{{this.classInstructor}}}</h2>
-    <p>{{{this.classDuration}}}</p>
+    <h2>{{{this.class_name}}} <span>WITH</span> {{{this.class_instructor}}}</h2>
+    <p>{{{this.class_duration}}} MIN</p>
     <button>BOOK NOW</button>
     <input type="text" name="id" value={{this.id}} hidden />
     <input type="text" name="action" value="borrow" hidden />
