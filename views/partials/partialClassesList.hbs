@@ -3,11 +3,13 @@
     <img src="{{{this.img}}}" />
   </div>
   <div id="classDescrp">
-    <h2>{{{this.class_name}}} <span>WITH</span> {{{this.class_instructor}}}</h2>
-    <p>{{{this.class_duration}}} MIN</p>
+    <h2 name="classCart" value="yoga">{{this.class_name}}
+      <span>WITH</span>
+      {{this.class_instructor}}</h2>
+    <p>{{this.class_duration}} MIN</p>
     <button>BOOK NOW</button>
     <input type="text" name="id" value={{this.id}} hidden />
-    <input type="text" name="action" value="borrow" hidden />
+    <input type="text" name="action" value="book" hidden />
   </div>
 
 </form>

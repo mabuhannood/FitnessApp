@@ -4,7 +4,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 const HTTP_PORT = process.env.PORT || 8080;
-
+// Handlebars
 const exphbs = require("express-handlebars");
 
 app.engine(
@@ -21,8 +21,7 @@ app.engine(
 );
 app.set("view engine", ".hbs");
 
-const path = require("path");
-
+//define static folder
 app.use(express.static("assets"));
 
 // import a mongodb driver (mongoose)
@@ -30,6 +29,8 @@ const mongoose = require("mongoose");
 mongoose.connect(
   "mongodb+srv://mabuhannood:22446688@cluster0.clc893a.mongodb.net/fitness"
 );
+//Define schemas
+
 const Schema = mongoose.Schema;
 const classesSchema = new Schema({
   id: Number,
@@ -39,7 +40,31 @@ const classesSchema = new Schema({
   img: String,
 });
 
+const usersSchema = new Schema({
+  user_name: String,
+  user_email: String,
+  password: String,
+  admin: Boolean,
+});
+
+const itemsSchema = new Schema({
+  id: Number,
+  class_name: String,
+  class_instructor: String,
+  class_duration: Number,
+  user_email: String,
+});
+const paymentSchema = new Schema({
+  id: Number,
+  email: String,
+  amount: Number,
+  items: [],
+});
+
 const classes = mongoose.model("classes", classesSchema);
+const users = mongoose.model("users", usersSchema);
+const items = mongoose.model("items", itemsSchema);
+const payment = mongoose.model("payments", paymentSchema);
 
 // endpoints
 app.get("/", (req, res) => {
@@ -71,8 +96,6 @@ app.get("/classes", (req, res) => {
     .find()
     .lean()
     .then((results) => {
-      console.log(results);
-      // res.json(results);
       res.render("classes", {
         layout: "main.hbs",
         classesList: results,
@@ -81,6 +104,12 @@ app.get("/classes", (req, res) => {
     });
 });
 
+app.post("/classes", (req, res) => {
+  const classSelected = req.body.classCart;
+  console.log(`class: ${classSelected}`);
+});
+
+//-------------------
 const onHttpStart = () => {
   console.log(`Web server started on port ${HTTP_PORT}, press CTRL+C to exit`);
 };
