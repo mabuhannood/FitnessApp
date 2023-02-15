@@ -14,6 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Readex+Pro&display=swap"
       rel="stylesheet"
     />
+    <script type="text/javascript" src="/assets/app.js" defer></script>
   </head>
   <body>
     <header>
@@ -23,9 +24,9 @@
         <li><a href="/classes">Classes</a></li>
         <li><a href="/cart">Cart</a></li>
         {{#if isLoggedIn}}
-        <li><a href="/logout">Logout</a></li>
+          <li><a href="/logout">Logout</a></li>
         {{else}}
-        <li><a href="/login">Login</a></li>
+          <li><a href="/login">Login</a></li>
         {{/if}}
 
       </ul>

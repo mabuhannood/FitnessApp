@@ -1,7 +1,7 @@
 <main id="cartPage">
   <h1>CHECKOUT</h1>
 
-  <form method="post" action="/checkout">
+  <form method="post" action="/cart/pay">
     <h3>CUSTOMER DETAILS</h3>
     <input type="text" placeholder="Enter your name" />
     <br />
@@ -13,6 +13,7 @@
         VERIFIED MEMBER</p>
     {{/if}}
     <h3 id="yourClasses">YOUR CLASSES</h3>
+
     {{#each cartItems}}
       <div id="cartItems">
         <div id="mainItems">
@@ -20,15 +21,29 @@
           <p class="itemsTitle">{{class_duration}} MIN</p>
         </div>
         <div id="itemRemove">
-          <button id="btn-remove">REMOVE</button>
+          <button
+            id="btn-remove"
+            value={{id}}
+            onclick="removeItem({{id}})"
+            type="button"
+          >REMOVE</button>
         </div>
       </div>
     {{/each}}
+
     <hr />
-    <p class="total">Subtotal: 1000</p>
-    <p class="total">Tax: 1000</p>
-    <hr />
-    <p class="total">Total: 1000</p>
+    {{#if membership}}
+      <p class="total">Subtotal: 0</p>
+      <p class="total">Tax: 0</p>
+      <hr />
+      <p class="total">Total: 0</p>
+    {{else}}
+      <p class="total">Subtotal: {{subTot}} </p>
+      <p class="total">Tax: {{vat}} </p>
+      <hr />
+      <p class="total">Total: {{total}} </p>
+    {{/if}}
     <button id="btn-pay">PAY</button>
+
   </form>
 </main>

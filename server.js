@@ -32,6 +32,7 @@ app.engine(
 );
 app.set("view engine", ".hbs");
 
+app.use("/assets", express.static("assets"));
 app.use(express.static("assets"));
 
 // import a mongodb driver (mongoose)
@@ -76,6 +77,8 @@ const cart = mongoose.model("carts", cartSchema);
 const payments = mongoose.model("payments", paymentSchema);
 
 // endpoints
+
+//login page endpoint //
 app.get("/", (req, res) => {
   res.render("home", { layout: "main" });
 });
@@ -199,9 +202,9 @@ app.get("/logout", (req, res) => {
   return res.redirect("/login");
 });
 
+// classes page endpoint //
 app.get("/classes", async (req, res) => {
   const loggedUser = req.session.userEmail;
-  console.log("loggedUser", loggedUser);
   const classesFromDb = await classes.find({}).lean();
   if (loggedUser === undefined) {
     res.render("classes", {
@@ -240,8 +243,8 @@ app.post("/cart", (req, res) => {
     return res.render("error", {
       layout: "main",
       message: "User must be logged in to book a class",
-      link: "/classes",
-      linkName: "Return to classes Page",
+      link: "/login",
+      linkName: "LOGIN",
     });
   } else {
     const { class_name, class_duration, class_instructor, user_email, id } =
@@ -263,26 +266,101 @@ app.post("/cart", (req, res) => {
 app.get("/cart", async (req, res) => {
   const loggedUser = req.session.userEmail;
   const cartItemsFromDb = await cart.find({ user_email: loggedUser }).lean();
-  const amountFromDb = await payments.find({ userEmail: loggedUser }).lean();
-  console.log(cartItemsFromDb);
+  const amountFromDb = await payments
+    .find({ userEmail: loggedUser, amount: 75 })
+    .lean();
+
   if (!cartItemsFromDb.length) {
     return res.render("error", {
       layout: "main",
       message: "There are no classes booked",
       link: "/classes",
-      linkName: "Return to classes Page",
+      linkName: "VIEW CLASSES",
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
     });
   } else if (cartItemsFromDb.length) {
-    console.log(cartItemsFromDb);
-    return res.render("cart", {
-      layout: "main",
-      cartItems: cartItemsFromDb,
-      membership: amountFromDb,
-      logged: req.session.userEmail,
-      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    if (amountFromDb.length) {
+      return res.render("cart", {
+        layout: "main",
+        cartItems: cartItemsFromDb,
+        membership: amountFromDb,
+        logged: req.session.userEmail,
+        isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      });
+    } else {
+      let subtotal = 0;
+      for (let index = 0; index < cartItemsFromDb.length; index++) {
+        const item = cartItemsFromDb[index];
+        subtotal += 0.75 * parseFloat(item.class_duration);
+      }
+
+      const tax = (subtotal * 0.13).toFixed(2);
+      const totalCost = (subtotal + subtotal * 0.13).toFixed(2);
+      return res.render("cart", {
+        layout: "main",
+        cartItems: cartItemsFromDb,
+        subTot: subtotal,
+        vat: tax,
+        total: totalCost,
+        logged: req.session.userEmail,
+        isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      });
+    }
+  }
+});
+
+app.delete("/cart/:classId", (req, res) => {
+  const loggedUser = req.session.userEmail;
+  console.log("loggedUser, req.params.classId", loggedUser, req.params.classId);
+  cart
+    .deleteOne({
+      user_email: loggedUser,
+      id: parseInt(req.params.classId),
+    })
+    .then((results) => {
+      console.log(results);
+      if (!results.deletedCount) {
+        res.status(200).json({ success: false });
+        return;
+      }
+      res.status(200).json({ success: true });
+      return;
+    })
+    .catch((err) => {
+      res.status(500).json({ success: false });
+      return;
+    });
+});
+
+app.post("/cart/pay", async (req, res) => {
+  const loggedUser = req.session.userEmail;
+  const isMember = await payments
+    .find({ userEmail: loggedUser, amount: 75 })
+    .lean();
+
+  let paymentToAdd;
+  if (isMember.length) {
+    paymentToAdd = new payments({
+      amount: 0,
+      userEmail: loggedUser,
+    });
+  } else {
+    paymentToAdd = new payments({
+      amount: req.body.total,
+      userEmail: loggedUser,
     });
   }
+  const addPayment = await paymentToAdd.save();
+
+  const cartDeleteResult = await cart.deleteMany({ user_email: loggedUser });
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
+  return res.render("error", {
+    layout: "main",
+    message: `Transaction No. ${randomNumber} Saved`,
+    link: "/",
+    linkName: "RETURN HOME",
+    isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+  });
 });
 //-------------------
 const onHttpStart = () => {
