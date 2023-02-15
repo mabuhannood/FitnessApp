@@ -94,6 +94,7 @@ app.post("/login", async (req, res) => {
   if (!email || !password) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "Email or password is empty",
       link: "/login",
       linkName: "Return to Login Page",
@@ -106,6 +107,7 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.render("error", {
         layout: "main",
+        title: "ERROR",
         message: "User not found",
         link: "/login",
         linkName: "Return to Login Page",
@@ -118,6 +120,7 @@ app.post("/login", async (req, res) => {
     if (user) {
       return res.render("error", {
         layout: "main",
+        title: "ERROR",
         message: "User Already Exist",
         link: "/login",
         linkName: "Return to Login Page",
@@ -141,6 +144,7 @@ app.post("/login", async (req, res) => {
       if (error) {
         return res.render("error", {
           layout: "main",
+          title: "ERROR",
           message: "Internal Server Error",
           link: "/login",
           linkName: "Return to Login Page",
@@ -154,6 +158,7 @@ app.post("/login", async (req, res) => {
         if (error) {
           return res.render("error", {
             layout: "main",
+            title: "ERROR",
             message: "Internal Server Error",
             link: "/login",
             linkName: "Return to Login Page",
@@ -175,6 +180,7 @@ app.post("/login", async (req, res) => {
       if (error) {
         return res.render("error", {
           layout: "main",
+          title: "ERROR",
           message: "Internal Server Error",
           link: "/login",
           linkName: "Return to Login Page",
@@ -186,6 +192,7 @@ app.post("/login", async (req, res) => {
   } else {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "Page Not Found",
       link: "/login",
       linkName: "Return to Login Page",
@@ -242,6 +249,7 @@ app.post("/cart", (req, res) => {
   if (loggedUser === undefined) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "User must be logged in to book a class",
       link: "/login",
       linkName: "LOGIN",
@@ -273,6 +281,7 @@ app.get("/cart", async (req, res) => {
   if (!cartItemsFromDb.length) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "There are no classes booked",
       link: "/classes",
       linkName: "VIEW CLASSES",
@@ -332,7 +341,7 @@ app.delete("/cart/:classId", (req, res) => {
     });
 });
 
-app.post("/cart/pay", async (req, res) => {
+app.post("/pay", async (req, res) => {
   const loggedUser = req.session.userEmail;
   const isMember = await payments
     .find({ userEmail: loggedUser, amount: 75 })
@@ -346,17 +355,18 @@ app.post("/cart/pay", async (req, res) => {
     });
   } else {
     paymentToAdd = new payments({
-      amount: req.body.total,
+      amount: req.body.amount,
       userEmail: loggedUser,
     });
   }
   const addPayment = await paymentToAdd.save();
 
   const cartDeleteResult = await cart.deleteMany({ user_email: loggedUser });
-  const randomNumber = Math.floor(Math.random() * 100) + 1;
+  const randomNumber = Math.floor(Math.random() * 10000) + 1;
   return res.render("error", {
     layout: "main",
-    message: `Transaction No. ${randomNumber} Saved`,
+    title: "Payment Received",
+    message: `Confirmation No. ${randomNumber} `,
     link: "/",
     linkName: "RETURN HOME",
     isLoggedIn: req.session.userEmail && req.session.userEmail != "",

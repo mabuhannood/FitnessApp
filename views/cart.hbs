@@ -1,7 +1,7 @@
 <main id="cartPage">
   <h1>CHECKOUT</h1>
 
-  <form method="post" action="/cart/pay">
+  <form method="post" action="/pay">
     <h3>CUSTOMER DETAILS</h3>
     <input type="text" placeholder="Enter your name" />
     <br />
@@ -42,7 +42,9 @@
       <p class="total">Tax: {{vat}} </p>
       <hr />
       <p class="total">Total: {{total}} </p>
+
     {{/if}}
+    <input name="amount" value="{{total}}" hidden />
     <button id="btn-pay">PAY</button>
 
   </form>
