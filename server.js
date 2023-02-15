@@ -1,11 +1,22 @@
 const express = require("express");
+const session = require("express-session");
+const exphbs = require("express-handlebars");
+const mongoose = require("mongoose");
+const path = require("path");
+
 const app = express();
+
+app.use(
+  session({
+    secret: "the quick brown fox jumped over the lazy dog 1234567890", // random string, used for configuring the session
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use(express.urlencoded({ extended: true }));
 
 const HTTP_PORT = process.env.PORT || 8080;
-// Handlebars
-const exphbs = require("express-handlebars");
 
 app.engine(
   ".hbs",
@@ -21,16 +32,12 @@ app.engine(
 );
 app.set("view engine", ".hbs");
 
-//define static folder
 app.use(express.static("assets"));
 
 // import a mongodb driver (mongoose)
-const mongoose = require("mongoose");
 mongoose.connect(
   "mongodb+srv://mabuhannood:22446688@cluster0.clc893a.mongodb.net/fitness"
 );
-//Define schemas
-
 const Schema = mongoose.Schema;
 const classesSchema = new Schema({
   id: Number,
@@ -41,10 +48,12 @@ const classesSchema = new Schema({
 });
 
 const usersSchema = new Schema({
-  user_name: String,
-  user_email: String,
+  id: Number,
+  name: String,
   password: String,
-  admin: Boolean,
+  email: String,
+  isAdmin: Boolean,
+  isMember: Boolean,
 });
 
 const itemsSchema = new Schema({
@@ -54,33 +63,132 @@ const itemsSchema = new Schema({
   class_duration: Number,
   user_email: String,
 });
+
 const paymentSchema = new Schema({
   id: Number,
-  email: String,
   amount: Number,
-  items: [],
+  userEmail: String,
 });
 
 const classes = mongoose.model("classes", classesSchema);
 const users = mongoose.model("users", usersSchema);
 const items = mongoose.model("items", itemsSchema);
-const payment = mongoose.model("payments", paymentSchema);
+const payments = mongoose.model("payments", paymentSchema);
 
 // endpoints
 app.get("/", (req, res) => {
   res.render("home", { layout: "main" });
 });
 app.get("/login", (req, res) => {
+  if (req.session.userEmail && req.session.userEmail != "") {
+    return res.redirect("/classes");
+  }
   res.render("login", { layout: "main" });
 });
 
-app.post("/login", (req, res) => {
-  // to do
-  //check the validity of the data
-  // if correct, store the user data in the DB
-  // do authentication
-  // redirect the user to the classes page
-  // if not, show a propper message error
+app.post("/login", async (req, res) => {
+  const { email, password, button } = req.body;
+  if (!email || !password) {
+    return res.render("error", {
+      layout: "main",
+      message: "Email or password is empty",
+      link: "/login",
+      linkName: "Return to Login Page",
+    });
+  }
+
+  if (button === "login") {
+    const user = await users.findOne({ email: email, password: password });
+
+    if (!user) {
+      return res.render("error", {
+        layout: "main",
+        message: "User not found",
+        link: "/login",
+        linkName: "Return to Login Page",
+      });
+    }
+    req.session.userEmail = email;
+    res.redirect("/classes");
+  } else if (button === "register") {
+    const user = await users.findOne({ email: email });
+    if (user) {
+      return res.render("error", {
+        layout: "main",
+        message: "User Already Exist",
+        link: "/login",
+        linkName: "Return to Login Page",
+      });
+    }
+    return res.render("login", {
+      layout: "main",
+      isModeRegister: true,
+      email: email,
+      password: password,
+    });
+  } else if (button === "yes") {
+    const newUser = new users({
+      name: email.split("@")[0],
+      email: email,
+      isAdmin: false,
+      password: password,
+      isMember: true,
+    });
+    newUser.save((error) => {
+      if (error) {
+        return res.render("error", {
+          layout: "main",
+          message: "Internal Server Error",
+          link: "/login",
+          linkName: "Return to Login Page",
+        });
+      }
+      const newPayment = new payments({
+        amount: 75,
+        userEmail: email,
+      });
+      newPayment.save((error) => {
+        if (error) {
+          return res.render("error", {
+            layout: "main",
+            message: "Internal Server Error",
+            link: "/login",
+            linkName: "Return to Login Page",
+          });
+        }
+        req.session.userEmail = email;
+        return res.redirect("/classes");
+      });
+    });
+  } else if (button === "no") {
+    const newUser = new users({
+      name: email.split("@")[0],
+      email: email,
+      isAdmin: false,
+      password: password,
+      isMember: false,
+    });
+    newUser.save((error) => {
+      if (error) {
+        return res.render("error", {
+          layout: "main",
+          message: "Internal Server Error",
+          link: "/login",
+          linkName: "Return to Login Page",
+        });
+      }
+      req.session.userEmail = email;
+      return res.redirect("/classes");
+    });
+  } else {
+    return res.render("error", {
+      layout: "main",
+      message: "Page Not Found",
+      link: "/login",
+      linkName: "Return to Login Page",
+    });
+  }
+
 });
 
 app.get("/cart", (req, res) => {
@@ -88,6 +196,11 @@ app.get("/cart", (req, res) => {
 });
 app.get("/error", (req, res) => {
   res.render("error", { layout: "main" });
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  return res.redirect("/login");
 });
 
 app.get("/classes", (req, res) => {
@@ -99,6 +212,7 @@ app.get("/classes", (req, res) => {
       res.render("classes", {
         layout: "main.hbs",
         classesList: results,
+        isLoggedIn: req.session.userEmail && req.session.userEmail != "",
       });
       return;
     });

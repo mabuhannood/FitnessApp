@@ -1,18 +1,28 @@
-<form id="loginPage" method="post" action="/login">
-  <h3>LOGIN OR SIGNUP</h3>
-  <input type="email" placeholder="Enter email address" />
-  <br />
-  <input type="email" placeholder="Enter password" />
-  <br />
-  <button id="btn-login">LOGIN</button>
-  <button id="btn-create">CREATE ACCOUNT</button>
-</form>
+
+
+{{#if isModeRegister}}
 
 <div id="createPage">
-  <h3>CREATE AN ACCOUNT</h3>
-  <input type="checkbox" />
-  <label>Signup to be a member? (75$ per month)</label>
-  <br />
-  <button class="btn-yesno">YES</button>
-  <button class="btn-yesno">NO</button>
+  <form id="createPage" method="post" action="/login">
+    <h3>CREATE AN ACCOUNT</h3>
+    <label>Signup to be a member? (75$ per month)</label>
+    <input type="email" style="display: none;" value="{{{email}}}" name="email" placeholder="Enter email address" />
+    <input type="password" style="display: none" value="{{{password}}}" name="password" placeholder="Enter password" />
+    <br />
+    <button name="button" value="yes" class="btn-yesno">YES</button>
+    <button name="button" value="no" class="btn-yesno">NO</button>
+  </form>
+
 </div>
+{{else}}
+<form id="loginPage" method="post" action="/login">
+  <h3>LOGIN OR SIGNUP</h3>
+  <input type="email" name="email" placeholder="Enter email address" />
+  <br />
+  <input type="password" name="password" placeholder="Enter password" />
+  <br />
+  <button name="button" value="login" id="btn-login">LOGIN</button>
+  <button name="button" value="register" id="btn-create">CREATE ACCOUNT</button>
+</form>
+
+{{/if}}
