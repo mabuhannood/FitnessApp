@@ -5,17 +5,25 @@
     <h3>CUSTOMER DETAILS</h3>
     <input type="text" placeholder="Enter your name" />
     <br />
-    <input type="email" placeholder="Enter your email" />
+    <input type="email" placeholder="Enter your email" value={{logged}} />
     <br />
-    <p id="member">
-      <span id="star">&starf;</span>
-      VERIFIED MEMBER</p>
-    <h3>YOUR CLASSES</h3>
-
-    <p>CYCLING - BEGINNER WITH ALEX</p>
-    <p>30 MIN</p>
-    <button id="btn-remove">REMOVE</button>
-
+    {{#if membership}}
+      <p id="member">
+        <span id="star">&starf;</span>
+        VERIFIED MEMBER</p>
+    {{/if}}
+    <h3 id="yourClasses">YOUR CLASSES</h3>
+    {{#each cartItems}}
+      <div id="cartItems">
+        <div id="mainItems">
+          <p class="itemsTitle">{{class_name}} WITH {{class_instructor}}</p>
+          <p class="itemsTitle">{{class_duration}} MIN</p>
+        </div>
+        <div id="itemRemove">
+          <button id="btn-remove">REMOVE</button>
+        </div>
+      </div>
+    {{/each}}
     <hr />
     <p class="total">Subtotal: 1000</p>
     <p class="total">Tax: 1000</p>

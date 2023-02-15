@@ -56,7 +56,7 @@ const usersSchema = new Schema({
   isMember: Boolean,
 });
 
-const itemsSchema = new Schema({
+const cartSchema = new Schema({
   id: Number,
   class_name: String,
   class_instructor: String,
@@ -72,7 +72,7 @@ const paymentSchema = new Schema({
 
 const classes = mongoose.model("classes", classesSchema);
 const users = mongoose.model("users", usersSchema);
-const items = mongoose.model("items", itemsSchema);
+const cart = mongoose.model("carts", cartSchema);
 const payments = mongoose.model("payments", paymentSchema);
 
 // endpoints
@@ -188,12 +188,8 @@ app.post("/login", async (req, res) => {
       linkName: "Return to Login Page",
     });
   }
-
 });
 
-app.get("/cart", (req, res) => {
-  res.render("cart", { layout: "main" });
-});
 app.get("/error", (req, res) => {
   res.render("error", { layout: "main" });
 });
@@ -203,26 +199,91 @@ app.get("/logout", (req, res) => {
   return res.redirect("/login");
 });
 
-app.get("/classes", (req, res) => {
-  let classesList = [];
-  classes
-    .find()
-    .lean()
-    .then((results) => {
-      res.render("classes", {
-        layout: "main.hbs",
-        classesList: results,
-        isLoggedIn: req.session.userEmail && req.session.userEmail != "",
-      });
-      return;
+app.get("/classes", async (req, res) => {
+  const loggedUser = req.session.userEmail;
+  console.log("loggedUser", loggedUser);
+  const classesFromDb = await classes.find({}).lean();
+  if (loggedUser === undefined) {
+    res.render("classes", {
+      layout: "main.hbs",
+      classesList: classesFromDb,
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
     });
+  } else {
+    const cartItems = await cart.find({ user_email: loggedUser }).lean();
+    // now to check if the class exists in the cart items
+
+    if (cartItems.length) {
+      for (let index = 0; index < cartItems.length; index++) {
+        const cartItem = cartItems[index];
+        for (const [i, item] of classesFromDb.entries()) {
+          if (item.id === cartItem.id) {
+            classesFromDb[i].booked = "disabled";
+          }
+        }
+      }
+    }
+
+    res.render("classes", {
+      layout: "main.hbs",
+      classesList: classesFromDb,
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    });
+  }
+
+  return;
 });
 
-app.post("/classes", (req, res) => {
-  const classSelected = req.body.classCart;
-  console.log(`class: ${classSelected}`);
+app.post("/cart", (req, res) => {
+  const loggedUser = req.session.userEmail;
+  if (loggedUser === undefined) {
+    return res.render("error", {
+      layout: "main",
+      message: "User must be logged in to book a class",
+      link: "/classes",
+      linkName: "Return to classes Page",
+    });
+  } else {
+    const { class_name, class_duration, class_instructor, user_email, id } =
+      req.body;
+    const itemToAdd = new cart({
+      id,
+      class_name,
+      class_instructor,
+      class_duration,
+      user_email: loggedUser,
+    });
+    itemToAdd.save().then((results) => {
+      console.log(results);
+    });
+    res.redirect(`/classes`);
+  }
 });
 
+app.get("/cart", async (req, res) => {
+  const loggedUser = req.session.userEmail;
+  const cartItemsFromDb = await cart.find({ user_email: loggedUser }).lean();
+  const amountFromDb = await payments.find({ userEmail: loggedUser }).lean();
+  console.log(cartItemsFromDb);
+  if (!cartItemsFromDb.length) {
+    return res.render("error", {
+      layout: "main",
+      message: "There are no classes booked",
+      link: "/classes",
+      linkName: "Return to classes Page",
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    });
+  } else if (cartItemsFromDb.length) {
+    console.log(cartItemsFromDb);
+    return res.render("cart", {
+      layout: "main",
+      cartItems: cartItemsFromDb,
+      membership: amountFromDb,
+      logged: req.session.userEmail,
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    });
+  }
+});
 //-------------------
 const onHttpStart = () => {
   console.log(`Web server started on port ${HTTP_PORT}, press CTRL+C to exit`);

@@ -1,4 +1,5 @@
-<form id="classesForm" action="/classes" method="POST">
+<form id="classesForm" action="/cart" method="POST">
+
   <div id="ClassImg">
     <img src="{{{this.img}}}" />
   </div>
@@ -7,9 +8,28 @@
       <span>WITH</span>
       {{this.class_instructor}}</h2>
     <p>{{this.class_duration}} MIN</p>
-    <button>BOOK NOW</button>
-    <input type="text" name="id" value={{this.id}} hidden />
-    <input type="text" name="action" value="book" hidden />
+    <input
+      name="class_instructor"
+      id="class_instructor"
+      value="{{class_instructor}}"
+      hidden
+    />
+    <input
+      name="class_duration"
+      id="class_duration"
+      value="{{class_duration}}"
+      hidden
+    />
+    <input name="user_email" id="email" value="{{../isLoggedIn}}" hidden />
+    <input name="class_name" id="class_name" value="{{class_name}}" hidden />
+    <input name="id" id="class_id" value="{{id}}" hidden />
+
+    {{#if booked}}
+      <button id="btn-booked">BOOKED</button>
+    {{else}}
+      <button id="btn-book">BOOK NOW</button>
+    {{/if}}
+
   </div>
 
 </form>

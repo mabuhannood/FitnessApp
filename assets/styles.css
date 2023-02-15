@@ -98,16 +98,26 @@ img {
   padding-left: 20px;
   color: royalblue;
 }
-#classDescrp button {
+#btn-book {
+  width: 100px;
   border-radius: 5px;
   color: white;
-  background-color: tomato;
-  border: 1px solid tomato;
-  padding: 10px 20px 10px 20px;
+  background-color: coral;
+  border: 1px solid coral;
+  padding: 10px;
 }
-#classDescrp button:hover {
+#btn-book:hover {
   background-color: rgb(214, 85, 62);
   border: 1px solid rgb(214, 85, 62);
+}
+#btn-booked {
+  width: 100px;
+  pointer-events: none;
+  border-radius: 5px;
+  color: white;
+  background-color: rgb(214, 85, 62);
+  border: 1px solid rgb(214, 85, 62);
+  padding: 10px;
 }
 span {
   color: black;
@@ -215,8 +225,8 @@ label {
   width: 500px;
   margin-top: 10px;
   padding: 10px 0px 10px 0px;
-  background-color: tomato;
-  border: 1px solid tomato;
+  background-color: coral;
+  border: 1px solid coral;
   font-weight: bolder;
   margin-bottom: 5px;
 }
@@ -233,15 +243,20 @@ label {
   width: 150px;
   font-size: 12;
   font-weight: bold;
+  margin-top: 5px;
 }
 #btn-remove {
   color: royalblue;
-  width: 120px;
+  width: 150px;
+  height: 55px;
   padding: 10px 0px 10px 0px;
-  background-color: rgb(235, 233, 233);
-  border: 1px solid rgb(235, 233, 233);
+  background-color: rgb(236, 236, 236);
+  border: 1px solid rgb(236, 236, 236);
   font-weight: bold;
   /* align-content: right; */
+}
+#btn-remove:hover {
+  color: tomato;
 }
 .total {
   text-align: right;
@@ -251,4 +266,48 @@ hr {
 }
 #star {
   color: gold;
+}
+#cartItems {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+#itemRemove {
+  text-align: right;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.itemsTitle {
+  font-size: 15;
+  width: 350px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#yourClasses {
+  padding-top: 30px;
+}
+/* ----------------------------------- ERROR PAGE */
+#errorPage {
+  width: 300px;
+  padding: 20px 20px 40px 20px;
+  margin: auto;
+  margin-top: 100px;
+  background-color: white;
+  border: 2px solid silver;
+}
+
+#errorPage a {
+  cursor: pointer;
+  color: white;
+  width: 147.7px;
+  margin-bottom: 5px;
+  padding: 10px 10px 10px 10px;
+  border: 1px solid crimson;
+  background-color: crimson;
+}
+#title {
+  color: royalblue;
+  margin-bottom: 0px;
+}
+#message {
+  margin-bottom: 50px;
 }
