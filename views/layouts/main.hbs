@@ -20,7 +20,9 @@
     <header>
       <a href="/">Home</a>
       <ul>
-
+        {{#if isAdmin}}
+          <li><a href="/admin">Admin</a></li>
+        {{/if}}
         <li><a href="/classes">Classes</a></li>
         <li><a href="/cart">Cart</a></li>
         {{#if isLoggedIn}}

@@ -80,7 +80,11 @@ const payments = mongoose.model("payments", paymentSchema);
 
 //login page endpoint //
 app.get("/", (req, res) => {
-  res.render("home", { layout: "main" });
+  res.render("home", {
+    layout: "main",
+    isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    isAdmin: req.session.isAdmin,
+  });
 });
 app.get("/login", (req, res) => {
   if (req.session.userEmail && req.session.userEmail != "") {
@@ -114,6 +118,7 @@ app.post("/login", async (req, res) => {
       });
     }
     req.session.userEmail = email;
+    req.session.isAdmin = user.isAdmin;
     res.redirect("/classes");
   } else if (button === "register") {
     const user = await users.findOne({ email: email });
@@ -165,6 +170,7 @@ app.post("/login", async (req, res) => {
           });
         }
         req.session.userEmail = email;
+        req.session.isAdmin = false;
         return res.redirect("/classes");
       });
     });
@@ -187,6 +193,7 @@ app.post("/login", async (req, res) => {
         });
       }
       req.session.userEmail = email;
+      req.session.isAdmin = false;
       return res.redirect("/classes");
     });
   } else {
@@ -218,6 +225,7 @@ app.get("/classes", async (req, res) => {
       layout: "main.hbs",
       classesList: classesFromDb,
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
     });
   } else {
     const cartItems = await cart.find({ user_email: loggedUser }).lean();
@@ -238,6 +246,7 @@ app.get("/classes", async (req, res) => {
       layout: "main.hbs",
       classesList: classesFromDb,
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
     });
   }
 
@@ -286,6 +295,7 @@ app.get("/cart", async (req, res) => {
       link: "/classes",
       linkName: "VIEW CLASSES",
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
     });
   } else if (cartItemsFromDb.length) {
     if (amountFromDb.length) {
@@ -295,6 +305,7 @@ app.get("/cart", async (req, res) => {
         membership: amountFromDb,
         logged: req.session.userEmail,
         isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+        isAdmin: req.session.isAdmin,
       });
     } else {
       let subtotal = 0;
@@ -313,6 +324,7 @@ app.get("/cart", async (req, res) => {
         total: totalCost,
         logged: req.session.userEmail,
         isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+        isAdmin: req.session.isAdmin,
       });
     }
   }
@@ -370,8 +382,102 @@ app.post("/pay", async (req, res) => {
     link: "/",
     linkName: "RETURN HOME",
     isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    isAdmin: req.session.isAdmin,
   });
 });
+
+app.get("/admin", async (req, res) => {
+  if (!req.session.userEmail) {
+    return res.render("error", {
+      layout: "main",
+      message: "You are not logged in!",
+      link: "/login",
+      linkName: "Return to Login Page",
+    });
+  }
+  if (!req.session.isAdmin) {
+    return res.render("error", {
+      layout: "main",
+      message: "You are not allowed to use admin dashboard!",
+      link: "/classes",
+      linkName: "Go to Classes Page",
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
+    });
+  }
+  const allPayments = await payments
+    .find({})
+    .sort({ userEmail: 1 })
+    .lean()
+    .exec();
+  console.log(allPayments);
+  const totalMoneyEarned = await payments.aggregate([
+    { $group: { _id: null, amount: { $sum: "$amount" } } },
+  ]);
+  res.render("admin", {
+    layout: "main.hbs",
+    purchasesList: allPayments,
+    totalMoneyEarned: totalMoneyEarned[0].amount,
+    isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+    isAdmin: req.session.isAdmin,
+  });
+});
+
+app.post("/admin", async (req, res) => {
+  if (!req.session.userEmail) {
+    return res.render("error", {
+      layout: "main",
+      message: "You are not logged in!",
+      link: "/login",
+      linkName: "Return to Login Page",
+    });
+  }
+  if (!req.session.isAdmin) {
+    return res.render("error", {
+      layout: "main",
+      message: "You are not allowed to use admin dashboard!",
+      link: "/classes",
+      linkName: "Go to Classes Page",
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
+    });
+  }
+  const { sort } = req.body;
+  if (sort === "asc") {
+    const allPayments = await payments
+      .find({})
+      .sort({ userEmail: "asc" })
+      .lean()
+      .exec();
+    const totalMoneyEarned = await payments.aggregate([
+      { $group: { _id: null, amount: { $sum: "$amount" } } },
+    ]);
+    return res.render("admin", {
+      layout: "main.hbs",
+      purchasesList: allPayments,
+      totalMoneyEarned: totalMoneyEarned[0].amount,
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
+    });
+  } else if (sort === "desc") {
+    const allPayments = await payments
+      .find({})
+      .sort({ userEmail: "desc" })
+      .lean()
+      .exec();
+    const totalMoneyEarned = await payments.aggregate([
+      { $group: { _id: null, amount: { $sum: "$amount" } } },
+    ]);
+    return res.render("admin", {
+      layout: "main.hbs",
+      purchasesList: allPayments,
+      totalMoneyEarned: totalMoneyEarned[0].amount,
+      isLoggedIn: req.session.userEmail && req.session.userEmail != "",
+      isAdmin: req.session.isAdmin,
+    });
+  }
+});
+
 //-------------------
 const onHttpStart = () => {
   console.log(`Web server started on port ${HTTP_PORT}, press CTRL+C to exit`);

@@ -1,0 +1,45 @@
+<style>
+div{
+    background-color: yellow;
+    border: 2px solid red;
+    padding: 10px 30px 10px 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+</style>
+
+<div>
+    <h2>Total money earned by website</h2>
+    <p>${{{totalMoneyEarned}}}</p>
+
+<form method="post" action="/admin">
+
+
+<button name="sort" value="asc" type="submit">Sort by A-Z order
+</button>
+
+
+<button name="sort" value="desc" type="submit">Sort by Z-A order</button>
+
+</form>
+
+</div>
+
+
+<div>
+
+{{#each purchasesList}}
+
+{{> partialPurchasesList this}}
+
+{{/each}}
+
+
+</div>
+
+
+
+
+
