@@ -1,7 +1,6 @@
 body {
   font-family: "Readex Pro", sans-serif;
-  /* background-image: url(homeimage2.jpg);
-  background-size: cover; */
+
   background-color: black;
 }
 h1 {
@@ -13,7 +12,7 @@ header {
   height: 50px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  border-bottom: 1px solid green;
+  border-bottom: 1px solid royalblue;
 }
 header a {
   margin: 15px 0px 0px 10px;
@@ -36,35 +35,49 @@ li a {
   color: white;
 }
 a:hover {
-  color: green;
+  color: royalblue;
 }
 button {
   cursor: pointer;
 }
+
 /* ----------------------------------- HOME PAGE */
 #homePage {
-  justify-content: center;
+  padding-top: 15%;
+  height: 95vh;
+  width: 100%;
   text-align: center;
-  align-items: center;
-  margin-top: 100px;
-  justify-content: center;
   color: white;
+  background-image: url(homeimage2.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 a {
   text-decoration: none;
 }
+#homePage h1 {
+  font-weight: bold;
+  font-size: 50px;
+  padding: 0;
+  margin: 0px;
+  text-shadow: 3px 3px silver;
+}
 #homePage p {
   margin-bottom: 30px;
+  font-size: 20;
 }
 #btn-homePage {
   border-radius: 25px;
   color: white;
-  background-color: green;
-  border: 1px solid green;
+  background-color: crimson;
+  border: 1px solid crimson;
   padding: 10px 20px 10px 20px;
-  /* margin-top: 300px; */
 }
-
+#btn-homePage:hover {
+  background-color: rgb(175, 14, 47);
+  border: 1px solid rgb(175, 14, 47);
+}
 /* ----------------------------------- CLASSES PAGE */
 img {
   width: 170px;
@@ -83,14 +96,18 @@ img {
 }
 #classDescrp {
   padding-left: 20px;
-  color: navy;
+  color: royalblue;
 }
 #classDescrp button {
   border-radius: 5px;
   color: white;
-  background-color: green;
-  border: 1px solid green;
+  background-color: tomato;
+  border: 1px solid tomato;
   padding: 10px 20px 10px 20px;
+}
+#classDescrp button:hover {
+  background-color: rgb(214, 85, 62);
+  border: 1px solid rgb(214, 85, 62);
 }
 span {
   color: black;
@@ -127,16 +144,24 @@ span {
   padding: 10px 0px 10px 0px;
 }
 #btn-login {
-  background-color: green;
-  border: 1px solid green;
+  background-color: royalblue;
+  border: 1px solid royalblue;
+}
+#btn-login:hover {
+  background-color: rgb(53, 86, 184);
+  border: 1px solid rgb(53, 86, 184);
 }
 #btn-create {
-  background-color: navy;
-  border: 1px solid navy;
+  background-color: crimson;
+  border: 1px solid crimson;
+}
+#btn-create:hover {
+  background-color: rgb(175, 14, 47);
+  border: 1px solid rgb(175, 14, 47);
 }
 h3 {
   font-size: 12;
-  color: green;
+  color: royalblue;
 }
 
 #createPage {
@@ -158,12 +183,16 @@ label {
   width: 147.7px;
   margin-top: 10px;
   padding: 10px 0px 10px 0px;
-  background-color: green;
-  border: 1px solid green;
+  background-color: royalblue;
+  border: 1px solid royalblue;
   margin-bottom: 5px;
 }
+.btn-yesno:hover {
+  background-color: rgb(53, 86, 184);
+  border: 1px solid rgb(53, 86, 184);
+}
 /* ----------------------------------- CART PAGE */
-#cartPage {
+#cartPage form {
   width: 500px;
   padding: 20px;
   margin: auto;
@@ -178,6 +207,7 @@ label {
   margin: 0px 0px 10px 0px;
   width: 500px;
 }
+
 #btn-pay {
   cursor: pointer;
   /* border-radius: 5px; */
@@ -185,10 +215,14 @@ label {
   width: 500px;
   margin-top: 10px;
   padding: 10px 0px 10px 0px;
-  background-color: greenyellow;
-  border: 1px solid greenyellow;
+  background-color: tomato;
+  border: 1px solid tomato;
   font-weight: bolder;
   margin-bottom: 5px;
+}
+#btn-pay:hover {
+  background-color: rgb(214, 85, 62);
+  border: 1px solid rgb(214, 85, 62);
 }
 
 #member {
@@ -201,12 +235,13 @@ label {
   font-weight: bold;
 }
 #btn-remove {
-  color: green;
+  color: royalblue;
   width: 120px;
   padding: 10px 0px 10px 0px;
   background-color: rgb(235, 233, 233);
   border: 1px solid rgb(235, 233, 233);
   font-weight: bold;
+  /* align-content: right; */
 }
 .total {
   text-align: right;
