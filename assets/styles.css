@@ -311,3 +311,42 @@ hr {
 #message {
   margin-bottom: 50px;
 }
+
+/* ----------------------------------- ADMIN PAGE */
+
+#adminHeader {
+  text-align: center;
+  color: white;
+}
+
+#adminHeader>p{
+    font-size: 40px;
+}
+
+.partialAdmin {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid silver;
+  padding-left: 5px;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 3%;
+}
+
+#sortAsc, #sortDesc {
+  width: 120px;
+  border-radius: 5px;
+  color: white;
+  background-color: coral;
+  border: 1px solid coral;
+  padding: 10px;
+}
+
+#sortAsc:hover, #sortDesc:hover {
+  background-color: rgb(214, 85, 62);
+  border: 1px solid rgb(214, 85, 62);
+}
+
