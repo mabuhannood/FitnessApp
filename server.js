@@ -421,7 +421,6 @@ app.get("/admin", async (req, res) => {
     .sort({ userEmail: 1 })
     .lean()
     .exec();
-  // console.log(allPayments);
   const totalMoneyEarned = await payments.aggregate([
     { $group: { _id: null, amount: { $sum: "$amount" } } },
   ]);
