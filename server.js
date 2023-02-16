@@ -159,7 +159,9 @@ app.post("/login", async (req, res) => {
           linkName: "Return to Login Page",
         });
       }
+      const randomNumber = crypto.randomBytes(12).toString("hex");
       const newPayment = new payments({
+        id: randomNumber,
         amount: 75,
         userEmail: email,
       });
@@ -370,7 +372,7 @@ app.post("/pay", async (req, res) => {
   if (isMember.length) {
     paymentToAdd = new payments({
       id: randomNumber,
-      amount: 75,
+      amount: 0,
       userEmail: loggedUser,
     });
   } else {
@@ -427,7 +429,7 @@ app.get("/admin", async (req, res) => {
   res.render("admin", {
     layout: "main.hbs",
     purchasesList: allPayments,
-    totalMoneyEarned: totalMoneyEarned[0].amount,
+    totalMoneyEarned: totalMoneyEarned[0].amount.toFixed(2),
     isLoggedIn: req.session.userEmail && req.session.userEmail != "",
     isAdmin: req.session.isAdmin,
   });
@@ -467,7 +469,7 @@ app.post("/admin", async (req, res) => {
     return res.render("admin", {
       layout: "main.hbs",
       purchasesList: allPayments,
-      totalMoneyEarned: totalMoneyEarned[0].amount,
+      totalMoneyEarned: Number(totalMoneyEarned[0].amount).toFixed(2),
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
       isAdmin: req.session.isAdmin,
     });
@@ -483,7 +485,7 @@ app.post("/admin", async (req, res) => {
     return res.render("admin", {
       layout: "main.hbs",
       purchasesList: allPayments,
-      totalMoneyEarned: totalMoneyEarned[0].amount,
+      totalMoneyEarned: Number(totalMoneyEarned[0].amount).toFixed(2),
       isLoggedIn: req.session.userEmail && req.session.userEmail != "",
       isAdmin: req.session.isAdmin,
     });

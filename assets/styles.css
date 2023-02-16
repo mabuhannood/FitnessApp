@@ -303,6 +303,10 @@ hr {
   border: 1px solid crimson;
   background-color: crimson;
 }
+#errorPage a:hover {
+  border: 1px solid rgb(175, 14, 47);
+  background-color: rgb(175, 14, 47);
+}
 #title {
   color: royalblue;
   margin-bottom: 0px;
