@@ -3,6 +3,7 @@ const session = require("express-session");
 const exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
 const path = require("path");
+const crypto = require("crypto");
 
 const app = express();
 
@@ -39,6 +40,8 @@ app.use(express.static("assets"));
 mongoose.connect(
   "mongodb+srv://mabuhannood:22446688@cluster0.clc893a.mongodb.net/fitness"
 );
+
+// define schemas
 const Schema = mongoose.Schema;
 const classesSchema = new Schema({
   id: Number,
@@ -66,11 +69,12 @@ const cartSchema = new Schema({
 });
 
 const paymentSchema = new Schema({
-  id: Number,
+  id: String,
   amount: Number,
   userEmail: String,
 });
 
+// define models
 const classes = mongoose.model("classes", classesSchema);
 const users = mongoose.model("users", usersSchema);
 const cart = mongoose.model("carts", cartSchema);
@@ -253,6 +257,7 @@ app.get("/classes", async (req, res) => {
   return;
 });
 
+// cart page
 app.post("/cart", (req, res) => {
   const loggedUser = req.session.userEmail;
   if (loggedUser === undefined) {
@@ -283,8 +288,8 @@ app.post("/cart", (req, res) => {
 app.get("/cart", async (req, res) => {
   const loggedUser = req.session.userEmail;
   const cartItemsFromDb = await cart.find({ user_email: loggedUser }).lean();
-  const amountFromDb = await payments
-    .find({ userEmail: loggedUser, amount: 75 })
+  const isMember = await users
+    .find({ email: loggedUser, isMember: true })
     .lean();
 
   if (!cartItemsFromDb.length) {
@@ -298,11 +303,11 @@ app.get("/cart", async (req, res) => {
       isAdmin: req.session.isAdmin,
     });
   } else if (cartItemsFromDb.length) {
-    if (amountFromDb.length) {
+    if (isMember.length) {
       return res.render("cart", {
         layout: "main",
         cartItems: cartItemsFromDb,
-        membership: amountFromDb,
+        membership: isMember,
         logged: req.session.userEmail,
         isLoggedIn: req.session.userEmail && req.session.userEmail != "",
         isAdmin: req.session.isAdmin,
@@ -353,20 +358,24 @@ app.delete("/cart/:classId", (req, res) => {
     });
 });
 
+// payment
 app.post("/pay", async (req, res) => {
   const loggedUser = req.session.userEmail;
-  const isMember = await payments
-    .find({ userEmail: loggedUser, amount: 75 })
+  const randomNumber = crypto.randomBytes(12).toString("hex");
+  const isMember = await users
+    .find({ email: loggedUser, isMember: true })
     .lean();
 
   let paymentToAdd;
   if (isMember.length) {
     paymentToAdd = new payments({
-      amount: 0,
+      id: randomNumber,
+      amount: 75,
       userEmail: loggedUser,
     });
   } else {
     paymentToAdd = new payments({
+      id: randomNumber,
       amount: req.body.amount,
       userEmail: loggedUser,
     });
@@ -374,7 +383,6 @@ app.post("/pay", async (req, res) => {
   const addPayment = await paymentToAdd.save();
 
   const cartDeleteResult = await cart.deleteMany({ user_email: loggedUser });
-  const randomNumber = Math.floor(Math.random() * 10000) + 1;
   return res.render("error", {
     layout: "main",
     title: "Payment Received",
@@ -386,10 +394,12 @@ app.post("/pay", async (req, res) => {
   });
 });
 
+// admin page
 app.get("/admin", async (req, res) => {
   if (!req.session.userEmail) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "You are not logged in!",
       link: "/login",
       linkName: "Return to Login Page",
@@ -398,6 +408,7 @@ app.get("/admin", async (req, res) => {
   if (!req.session.isAdmin) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "You are not allowed to use admin dashboard!",
       link: "/classes",
       linkName: "Go to Classes Page",
@@ -410,7 +421,7 @@ app.get("/admin", async (req, res) => {
     .sort({ userEmail: 1 })
     .lean()
     .exec();
-  console.log(allPayments);
+  // console.log(allPayments);
   const totalMoneyEarned = await payments.aggregate([
     { $group: { _id: null, amount: { $sum: "$amount" } } },
   ]);
@@ -427,6 +438,7 @@ app.post("/admin", async (req, res) => {
   if (!req.session.userEmail) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "You are not logged in!",
       link: "/login",
       linkName: "Return to Login Page",
@@ -435,6 +447,7 @@ app.post("/admin", async (req, res) => {
   if (!req.session.isAdmin) {
     return res.render("error", {
       layout: "main",
+      title: "ERROR",
       message: "You are not allowed to use admin dashboard!",
       link: "/classes",
       linkName: "Go to Classes Page",
