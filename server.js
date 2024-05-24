@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
@@ -9,7 +11,7 @@ const app = express();
 
 app.use(
   session({
-    secret: "the quick brown fox jumped over the lazy dog 1234567890", // random string, used for configuring the session
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
   })
@@ -37,9 +39,7 @@ app.use("/assets", express.static("assets"));
 app.use(express.static("assets"));
 
 // import a mongodb driver (mongoose)
-mongoose.connect(
-  "mongodb+srv://mabuhannood:22446688@cluster0.clc893a.mongodb.net/fitness"
-);
+mongoose.connect(process.env.MONGO_URL);
 
 // define schemas
 const Schema = mongoose.Schema;
